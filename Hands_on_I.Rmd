@@ -55,48 +55,47 @@ sum(is.na(data))
 data$ca <- as.numeric(data$ca)
 data$thal <- as.numeric(data$thal)
 
-categorical_v <- c("sex", "cp", "fbs", "restecg", "exang", "slope", "ca", "thal", "num")
-
-continuous_v <- names(data)[!(names(data) %in% c(categorical_v, "patient_id"))]
-
-```
-## Now we will analyse catagorical data (UNIVARIATE ANALYSIS)
-
-```{r}
 #sex variable
-#data$sex_factor<-factor(data$sex)
-#levels(data$sex_factor) <- c("F", "M")
-#subset_sex<-data.frame(data$sex_factor)
+data$sex_factor<-factor(data$sex)
+levels(data$sex_factor) <- c("F", "M")
+subset_sex<-data.frame(data$sex_factor)
 
-cat_plots <- lapply(categorical_v, function(var) {
-  ggplot(data, aes_string(var)) +
-    geom_bar(fill = "blue") +
-    theme_minimal() +
-    ggtitle(paste("Distribution of", var))
-})
-grid.arrange(grobs = cat_plots, ncol = 3)
-```
-
-
-```{r}
-# chest pain type
-# : chest pain type
-#        -- Value 1: typical angina
-#        -- Value 2: atypical angina
-#        -- Value 3: non-anginal pain
-#        -- Value 4: asymptomatic
+#chest pain type
 data$cp_factor <-factor(data$cp)
 levels(data$cp_factor) <-c("typical angina","atypical angina", "non-anginal pain", "asymptomatic"  )
 levels(data$cp_factor)
 subset_cp<-data.frame(data$cp_factor)
-barplot(table(subset_cp))
+
+categorical_v <- c("sex", "cp", "fbs", "restecg", "exang", "slope", "ca", "thal", "num")
+
+continuous_v <- setdiff(names(heart_data), c(categorical_vars, "patient_id"))
+
 ```
+
+## Create visualizations in order to show which variables seem to be more associated with heart disease
 
 ```{r}
 library(ggplot2)
 library(gridExtra)
 library(corrplot)
 
+cat_plots <- lapply(categorical_v, function(var) {
+  ggplot(data, aes_string(var)) +
+    geom_bar(fill = "purple", color="black") +
+    theme_minimal() +
+    ggtitle(paste("Distribution of", var))
+})
+grid.arrange(grobs = cat_plots, ncol = 3)
+
+```
+```{r}
+cont_plots <- lapply(continuous_v, function(var) {
+  ggplot(data, aes_string(var)) +
+    geom_histogram(fill = "pink", color = "black", bins = 30) +
+    theme_minimal() +
+    ggtitle(paste("Distribution of", var))
+})
+grid.arrange(grobs = cont_plots, ncol = 2)
 
 ```
 #exercise induced angina
@@ -117,13 +116,6 @@ data$thal
 #        -- Value 1: > 50% diameter narrowing
 data$num
 ```
-
-## Create visualizations in order to show which variables seem to be more associated with heart disease
-
-```{r}
-
-```
-
 
 # 2 Difference in mortality rates in hospitalized COVID-19 patients 
 Using the supplementary material from the [Difference in mortality rates in hospitalized COVID-19 patients identified by cytokine profile clustering using a machine learning approach: An outcome prediction alternative](https://www.frontiersin.org/articles/10.3389/fmed.2022.987182/full), perform the following tasks

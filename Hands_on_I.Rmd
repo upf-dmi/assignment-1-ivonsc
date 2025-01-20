@@ -1,6 +1,6 @@
 ---
 title: "Session 1"
-author: "Dummy Surname (dummy@mail.com)"
+author: "Ivon Teresa Sánchez Cárdenas (ivonsanchez.01@estudiant.upf.edu)"
 date: "Last update: `r format(Sys.time(), '%d %B, %Y')`"      
 output:
   html_document:
@@ -22,10 +22,101 @@ The original dataset comes from [here](https://archive.ics.uci.edu/ml/datasets/H
 
 ```{r}
 
+data<-read.csv(file = "heart_disease_dataset.csv", header = T, sep=" ", na.strings = c("NA", " ", "-999", "NULL","?"))
+```
 
+
+```{r}
+str(data)
+head(data)
+summary(data)
+View(data)
+```
+## Here we are handling missing values
+```{r}
+#DATA CLEANING
+
+# find location of missing values
+print("Position of missing values ")
+which(is.na(data))
+ 
+# count total missing values 
+print("Count of total missing values ")
+sum(is.na(data))
+
+data <- na.omit(data)
+print("Count of total missing values ")
+sum(is.na(data))
 
 ```
 
+```{r}
+# separate variables in continuous or categorical
+data$ca <- as.numeric(data$ca)
+data$thal <- as.numeric(data$thal)
+
+categorical_v <- c("sex", "cp", "fbs", "restecg", "exang", "slope", "ca", "thal", "num")
+
+continuous_v <- names(data)[!(names(data) %in% c(categorical_v, "patient_id"))]
+
+```
+## Now we will analyse catagorical data (UNIVARIATE ANALYSIS)
+
+```{r}
+#sex variable
+#data$sex_factor<-factor(data$sex)
+#levels(data$sex_factor) <- c("F", "M")
+#subset_sex<-data.frame(data$sex_factor)
+
+cat_plots <- lapply(categorical_v, function(var) {
+  ggplot(data, aes_string(var)) +
+    geom_bar(fill = "blue") +
+    theme_minimal() +
+    ggtitle(paste("Distribution of", var))
+})
+grid.arrange(grobs = cat_plots, ncol = 3)
+```
+
+
+```{r}
+# chest pain type
+# : chest pain type
+#        -- Value 1: typical angina
+#        -- Value 2: atypical angina
+#        -- Value 3: non-anginal pain
+#        -- Value 4: asymptomatic
+data$cp_factor <-factor(data$cp)
+levels(data$cp_factor) <-c("typical angina","atypical angina", "non-anginal pain", "asymptomatic"  )
+levels(data$cp_factor)
+subset_cp<-data.frame(data$cp_factor)
+barplot(table(subset_cp))
+```
+
+```{r}
+library(ggplot2)
+library(gridExtra)
+library(corrplot)
+
+
+```
+#exercise induced angina
+#exercise induced angina (1 = yes; 0 = no)
+data$exang
+
+#slope: the slope of the peak exercise ST segment
+#        -- Value 1: upsloping
+#        -- Value 2: flat
+#        -- Value 3: downsloping
+data$slope
+
+#thal 3 = normal; 6 = fixed defect; 7 = reversable defect
+data$thal
+
+#diagnosis of heart disease (angiographic disease status)
+#        -- Value 0: < 50% diameter narrowing
+#        -- Value 1: > 50% diameter narrowing
+data$num
+```
 
 ## Create visualizations in order to show which variables seem to be more associated with heart disease
 

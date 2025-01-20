@@ -98,6 +98,15 @@ cont_plots <- lapply(continuous_v, function(var) {
 grid.arrange(grobs = cont_plots, ncol = 2)
 
 ```
+```{r}
+cont_data <- data[, continuous_vars]
+cor_matrix <- cor(cont_data, use = "complete.obs")
+# Correlation Heatmap
+corrplot(cor_matrix, method = "color", addCoef.col = "black", 
+         tl.col = "black", tl.srt = 45, title = "Correlation Matrix",
+         mar = c(0, 0, 2, 0))
+```
+
 #exercise induced angina
 #exercise induced angina (1 = yes; 0 = no)
 data$exang
